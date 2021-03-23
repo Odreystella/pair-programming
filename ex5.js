@@ -4,9 +4,7 @@ let todos = [
     { id: 1, content: 'Javascript', completed: false }
   ];
   
-function removeTodo(id) {
-  todos = todos.filter(todo => todo.id !== id );
-}
+const removeTodo = id => { todos = todos.filter(todo => todo.id !== id); };
   
 removeTodo(2);
   
