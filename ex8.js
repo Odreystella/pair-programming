@@ -5,10 +5,13 @@ let todos = [
     { id: 1, content: 'Javascript', completed: false }
   ];
 
-  
-const countCompletedTodos = () => {
-  todos.filter(todo => { todo.completed === true ? count++ : count})
+function countCompletedTodos(){
+  todos.filter(todo => { todo.completed  ? count++ : count})
   return count;
-}
+}  
+// const countCompletedTodos = () => {
+//   todos.filter(todo => { todo.completed === true ? count++ : count})
+//   return count;
+// };
   
 console.log(countCompletedTodos()); // 1
