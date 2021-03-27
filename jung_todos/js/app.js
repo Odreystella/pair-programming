@@ -3,11 +3,13 @@ const $todos = document.querySelector('.todos');
 const $inputTodo = document.querySelector('.input-todo');
 const $form = document.querySelector('.form');
 const $activeTodos = document.querySelector('.active-todos');
+const $clearBtn = document.querySelector('.btn');
+let clearCnt = 0;
 
 const render = () => {
     $todos.innerHTML = todos.map(({id,content,completed}) => {
         return `<li id="${id}" class="todo-item">
-        <input id="ck-${id}" class="checkbox" type="checkbox"${completed ? 'checkout':''}>
+        <input id="ck-${id}" class="checkbox" type="checkbox"${completed ? 'checked':''}>
         <label for="ck-${id}">${content}</label>
         <i class="remove-todo far fa-times-circle"></i>
       </li>`
@@ -18,7 +20,7 @@ const render = () => {
 const getTodos = () => {
     todos = [
       { id: 1, content: 'HTML', completed: false },
-      { id: 2, content: 'CSS', completed: true },
+      { id: 2, content: 'CSS', completed: false },
       { id: 3, content: 'Javascript', completed: false }
     ].sort((todo1,todo2)=> todo2.id - todo1.id);
     render(); 
@@ -35,21 +37,18 @@ const addTodo = content => {
 
 // 내용 삭제해주는 함수
 const removeTodo = id => {
-  console.log('yes')
   todos = todos.filter(todo =>todo.id !== +id);
-  console.log(todos)
   render();
 }
 
 $todos.onclick = e => {
   if(!e.target.classList.contains('remove-todo'))return;
   const id = e.target.parentNode.id;
-  console.log(id);
   removeTodo(id);
 }
 
 // form 태그의 이벤트 onsubmit이용해서 enter를 누르면 todos에 내용추가
-$form.onsubmit = (e) => {
+$form.onsubmit = e => {
   e.preventDefault();
   if($inputTodo.value == '')return; //input비어있는 상태일때 
 
@@ -57,6 +56,31 @@ $form.onsubmit = (e) => {
   $inputTodo.value = '';
   addTodo(content);
 }
-  
+
+// checkbox 클릭하면 true , 클릭해제하면 false
+const chkBoxTodo = chkId => {
+  if(!chkId === todos.id) return;
+  todos = todos.map(todo => todo.id === +chkId ? {...todo, completed: !todo.completed} : todo)
+  render();
+}
+
+$todos.onchange = e => {
+  const chkId = e.target.parentNode.id;
+  chkBoxTodo(chkId);
+}
+
+// click 되어 있는 리스트 Clearbtn누르면 제거되는 기능을 가진 함수  
+const clearTodo = () => {
+  todos = todos.filter(todo => todo.completed !== true)
+  render();  
+}
+
+// clearbtn누르면 완료된 todo의 개수 카운트되어 기록
+$clearBtn.onclick = () => {
+  const $completedTodos = document.querySelector('.completed-todos');
+  clearCnt += todos.filter(todo => todo.completed === true).length;
+  $completedTodos.textContent = clearCnt; 
+  clearTodo();
+};
 
 document.addEventListener('DOMContentLoaded',getTodos);  
