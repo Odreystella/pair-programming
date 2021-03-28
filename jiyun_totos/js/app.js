@@ -59,6 +59,7 @@ $form.onsubmit = e => {
 };
 
 // 데이터 삭제 함수
+// 선택한 데이터 외의 데이터만 필터하기
 const removeTodo = (id) => {
   todos = todos.filter(todo => todo.id !== +id );
   render();
@@ -86,13 +87,22 @@ $todos.onchange = (e) => {
 };
 
 // mark all complete as true
+// 모든 데이터에 completed: true 덮어씌우기
 const completeAllTrue = () => { todos = todos.map(todo => ({...todo, completed: true}) ); };
 
 // mark all complete as false
+// 모든 데이터에 completed: false 덮어씌우기
 const completeAllFalse = () => { todos = todos.map(todo => ({...todo, completed: false}) ); };
 
 // mark all as complete 버튼 누르면 전체 선택 or 해지되는 이벤트 발생
 document.querySelector('.complete-all').onchange = (e) => {
   e.target.checked ? completeAllTrue() : completeAllFalse();
+  render();
+};
+
+// clear completed 버튼 누르면 완료한 할일 모두 지우기
+// completed: false인 데이터만 필터하기
+document.querySelector('.btn').onclick = () => {
+  todos = todos.filter(todo => !todo.completed );
   render();
 };
