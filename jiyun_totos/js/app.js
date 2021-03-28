@@ -9,7 +9,13 @@ const generateId = () => {
   return Math.max(...todos.map((todo) => todo.id), 0) + 1;
 };
 
-// 데이터 렌더링 함수, HTML만들고 DOM에 반영
+// completed 갯수 세는 함수
+let countCompletedTodo = () => {
+  return todos.filter(todo => todo.completed).length;
+};
+
+
+// 데이터 렌더링 함수, HTML만들고 DOM에 반영, 렌더되면 completed 갯수 업데이트
 const render = () => {
   $todos.innerHTML = todos.map(({ id, content, completed }) => { 
     return `<li id ="${id}" class="todo-item">
@@ -18,7 +24,10 @@ const render = () => {
     <i class="remove-todo far fa-times-circle"></i>
     </li>`
   }).join('');
-  console.log(todos)
+  console.log(todos);
+  document.querySelector('.completed-todos').textContent = countCompletedTodo();
+  document.querySelector('.active-todos').textContent = todos.length - countCompletedTodo();
+
 };
 
 // 데이터 초기화 함수, id는 내림차순 정렬
@@ -51,6 +60,41 @@ $form.onsubmit = e => {
   addTodo(content); 
 };
 
+// 데이터 삭제 함수
+const removeTodo = (id) => {
+  todos = todos.filter(todo => todo.id !== +id );
+  render();
+};
+
+// 할일 1개 지우기 버튼 누르면 데이터 삭제하기
+// li요소 노드 마다 이벤트를 발생하지 않고 ul인 부모 노드에 이벤트 발생
+$todos.onclick = e => {
+  if (!e.target.classList.contains('remove-todo')) return;
+  
+  const { id } = e.target.parentNode;
+  removeTodo(id);
+}; 
+
+// checkbox 상태 변경 함수
+const toggleTodo = id => {
+  todos = todos.map(todo => todo.id === +id ? { ...todo, completed: !todo.completed } : todo);
+  render(); 
+};
+
+// checkbox 바뀌면 completed 값이 변경되는 이벤트 발생
+$todos.onchange = (e) => { 
+  const { id } = e.target.parentNode;
+  toggleTodo(id);
+};
+
+// // completed 갯수 세는 함수
+// let countCompletedTodo = () => {
+//   return todos.filter(todo => todo.completed).length;
+// };
+
+// const $completedTodos = document.querySelector('.completed-todos');
+// $completedTodos.textContent = countCompletedTodo();
+// console.log(countCompletedTodo());
 
 
 
