@@ -14,8 +14,7 @@ let countCompletedTodo = () => {
   return todos.filter(todo => todo.completed).length;
 };
 
-
-// 데이터 렌더링 함수, HTML만들고 DOM에 반영, 렌더되면 completed 갯수 업데이트
+// 데이터 렌더링 함수, HTML만들고 DOM에 반영, 렌더되면 completed 갯수, 할일 남은 갯수 업데이트
 const render = () => {
   $todos.innerHTML = todos.map(({ id, content, completed }) => { 
     return `<li id ="${id}" class="todo-item">
@@ -27,7 +26,6 @@ const render = () => {
   console.log(todos);
   document.querySelector('.completed-todos').textContent = countCompletedTodo();
   document.querySelector('.active-todos').textContent = todos.length - countCompletedTodo();
-
 };
 
 // 데이터 초기화 함수, id는 내림차순 정렬
@@ -87,14 +85,14 @@ $todos.onchange = (e) => {
   toggleTodo(id);
 };
 
-// // completed 갯수 세는 함수
-// let countCompletedTodo = () => {
-//   return todos.filter(todo => todo.completed).length;
-// };
+// mark all complete as true
+const completeAllTrue = () => { todos = todos.map(todo => ({...todo, completed: true}) ); };
 
-// const $completedTodos = document.querySelector('.completed-todos');
-// $completedTodos.textContent = countCompletedTodo();
-// console.log(countCompletedTodo());
+// mark all complete as false
+const completeAllFalse = () => { todos = todos.map(todo => ({...todo, completed: false}) ); };
 
-
-
+// mark all as complete 버튼 누르면 전체 선택 or 해지되는 이벤트 발생
+document.querySelector('.complete-all').onchange = (e) => {
+  e.target.checked ? completeAllTrue() : completeAllFalse();
+  render();
+};
