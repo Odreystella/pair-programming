@@ -23,7 +23,7 @@ const render = () => {
     <i class="remove-todo far fa-times-circle"></i>
     </li>`
   }).join('');
-  console.log(todos);
+  console.log('[TODOS]', todos);
   document.querySelector('.completed-todos').textContent = countCompletedTodo();
   document.querySelector('.active-todos').textContent = todos.length - countCompletedTodo();
 };
@@ -52,10 +52,13 @@ $form.onsubmit = e => {
   e.preventDefault();
 
   const content = $inputTodo.value; // input data 가리킴
-  $inputTodo.value = '';
-  $inputTodo.focus();
-  
-  addTodo(content); 
+  if (e.type === 'submit' && content) { // 빈 객체는 add 안되게 
+    //console.log(e);
+    $inputTodo.value = '';
+    //$inputTodo.focus();
+    
+    addTodo(content); 
+  }
 };
 
 // 데이터 삭제 함수
@@ -69,7 +72,7 @@ const removeTodo = (id) => {
 // li요소 노드 마다 이벤트를 발생하지 않고 ul인 부모 노드에 이벤트 발생
 $todos.onclick = e => {
   if (!e.target.classList.contains('remove-todo')) return;
-  
+  // console.log(e.target);
   const { id } = e.target.parentNode;
   removeTodo(id);
 }; 
@@ -105,4 +108,4 @@ document.querySelector('.complete-all').onchange = (e) => {
 document.querySelector('.btn').onclick = () => {
   todos = todos.filter(todo => !todo.completed );
   render();
-};
+};  
