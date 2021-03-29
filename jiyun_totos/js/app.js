@@ -23,6 +23,7 @@ const render = () => {
     <i class="remove-todo far fa-times-circle"></i>
     </li>`
   }).join('');
+
   console.log('[TODOS]', todos);
   document.querySelector('.completed-todos').textContent = countCompletedTodo();
   document.querySelector('.active-todos').textContent = todos.length - countCompletedTodo();
@@ -38,14 +39,41 @@ const getTodo = () => {
   render();
 };
 
-// DOM이 완성되면 getTodo 호출
-document.addEventListener('DOMContentLoaded', getTodo);
-
 // 신규데이터 추가 함수
 const addTodo = (content) => {
   todos = [{id: generateId(), content, completed: false }, ...todos];
   render();
 };
+
+// checkbox 상태 변경 함수
+const toggleTodo = id => {
+  todos = todos.map(todo => todo.id === +id ? { ...todo, completed: !todo.completed } : todo);
+  render(); 
+};
+
+// 데이터 삭제 함수
+// 선택한 데이터 외의 데이터만 필터하기
+const removeTodo = (id) => {
+  todos = todos.filter(todo => todo.id !== +id );
+  render();
+};
+
+// mark all complete as true
+// 모든 데이터에 completed: true 덮어씌우기
+const completeAllTrue = () => { 
+  todos = todos.map(todo => ({...todo, completed: true}) ); 
+  render();
+};
+
+// mark all complete as false
+// 모든 데이터에 completed: false 덮어씌우기
+const completeAllFalse = () => { 
+  todos = todos.map(todo => ({...todo, completed: false}) ); 
+  render();
+};
+
+// DOM이 완성되면 getTodo 호출
+document.addEventListener('DOMContentLoaded', getTodo);
 
 // input data 삭제 및 포커스
 $form.onsubmit = e => {
@@ -55,17 +83,16 @@ $form.onsubmit = e => {
   if (e.type === 'submit' && content) { // 빈 객체는 add 안되게 
     //console.log(e);
     $inputTodo.value = '';
-    //$inputTodo.focus();
+    $inputTodo.focus();
     
     addTodo(content); 
   }
 };
 
-// 데이터 삭제 함수
-// 선택한 데이터 외의 데이터만 필터하기
-const removeTodo = (id) => {
-  todos = todos.filter(todo => todo.id !== +id );
-  render();
+// checkbox 바뀌면 completed 값이 변경되는 이벤트 발생
+$todos.onchange = (e) => { 
+  const { id } = e.target.parentNode;
+  toggleTodo(id);
 };
 
 // 할일 1개 지우기 버튼 누르면 데이터 삭제하기
@@ -77,30 +104,9 @@ $todos.onclick = e => {
   removeTodo(id);
 }; 
 
-// checkbox 상태 변경 함수
-const toggleTodo = id => {
-  todos = todos.map(todo => todo.id === +id ? { ...todo, completed: !todo.completed } : todo);
-  render(); 
-};
-
-// checkbox 바뀌면 completed 값이 변경되는 이벤트 발생
-$todos.onchange = (e) => { 
-  const { id } = e.target.parentNode;
-  toggleTodo(id);
-};
-
-// mark all complete as true
-// 모든 데이터에 completed: true 덮어씌우기
-const completeAllTrue = () => { todos = todos.map(todo => ({...todo, completed: true}) ); };
-
-// mark all complete as false
-// 모든 데이터에 completed: false 덮어씌우기
-const completeAllFalse = () => { todos = todos.map(todo => ({...todo, completed: false}) ); };
-
 // mark all as complete 버튼 누르면 전체 선택 or 해지되는 이벤트 발생
 document.querySelector('.complete-all').onchange = (e) => {
   e.target.checked ? completeAllTrue() : completeAllFalse();
-  render();
 };
 
 // clear completed 버튼 누르면 완료한 할일 모두 지우기
